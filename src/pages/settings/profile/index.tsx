@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/contexts/auth-context'
 import { Copy, Check } from 'lucide-react'
 import { toast } from 'sonner'
+import { copyTextToClipboard } from '@/utils/copy-to-clipboard'
 import { Button } from '@/components/ui/button'
 import {
   SettingsPageDescription,
@@ -19,7 +20,7 @@ export function SettingsProfile() {
   const handleCopyUserId = async () => {
     if (!user?.id) return
     try {
-      await navigator.clipboard.writeText(user.id.toString())
+      await copyTextToClipboard(user.id.toString())
       setCopiedUserId(true)
       setTimeout(() => setCopiedUserId(false), 2000)
       toast.success(t('profile.copied'))

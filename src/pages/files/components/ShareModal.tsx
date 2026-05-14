@@ -5,6 +5,7 @@ import type { FileItem } from '@/types/file'
 import { Copy, Check } from 'lucide-react'
 import { toast } from 'sonner'
 import { formatFileSize } from '@/utils/format'
+import { copyTextToClipboard } from '@/utils/copy-to-clipboard'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -183,7 +184,7 @@ export function ShareModal({
         ? t('shareModal.copyWithCode', { link: shareLink, code: shareCode })
         : shareLink
 
-      await navigator.clipboard.writeText(textToCopy)
+      await copyTextToClipboard(textToCopy)
       setCopiedLink(true)
       setTimeout(() => {
         setCopiedLink(false)
@@ -197,7 +198,7 @@ export function ShareModal({
   // 复制提取码
   const handleCopyCode = async () => {
     try {
-      await navigator.clipboard.writeText(shareCode)
+      await copyTextToClipboard(shareCode)
       setCopiedCode(true)
       setTimeout(() => {
         setCopiedCode(false)

@@ -31,12 +31,20 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { ConfirmDialog } from '@/components/confirm-dialog'
+import { copyTextToClipboard } from '@/utils/copy-to-clipboard'
 import {
   DescriptionField,
   DescriptionFieldLabel,
@@ -93,6 +101,15 @@ export function StorageSettingCard({
     return value || emptyLabel
   }
 
+  // 获取枚举字段的显示值
+  const getEnumLabel = (field: ConfigScheme, value: string): string => {
+    if (field.dataType === 'enums' && field.enums) {
+      const option = field.enums.find((opt) => opt.value === value)
+      return option ? option.label : value
+    }
+    return value
+  }
+
   // 复制配置
   const handleCopyConfig = async () => {
     const configText: string[] = []
@@ -101,8 +118,9 @@ export function StorageSettingCard({
     )
     configText.push('='.repeat(30))
     schemes.forEach((field) => {
-      const value = configData[field.identifier] || t('card.notConfigured')
-      configText.push(`${field.label}: ${value}`)
+      const rawValue = configData[field.identifier] || t('card.notConfigured')
+      const displayValue = getEnumLabel(field, rawValue)
+      configText.push(`${field.label}: ${displayValue}`)
     })
     configText.push(
       t('card.remarkLine', {
@@ -111,7 +129,7 @@ export function StorageSettingCard({
     )
 
     try {
-      await navigator.clipboard.writeText(configText.join('\n'))
+      await copyTextToClipboard(configText.join('\n'))
       setCopiedConfig(true)
       setTimeout(() => setCopiedConfig(false), 2000)
       toast.success(t('card.copied'))
@@ -123,7 +141,7 @@ export function StorageSettingCard({
   // 复制单个字段
   const handleCopyField = async (identifier: string, value: string) => {
     try {
-      await navigator.clipboard.writeText(value)
+      await copyTextToClipboard(value)
       setCopiedField(identifier)
       setTimeout(() => setCopiedField(null), 2000)
       toast.success(t('card.copied'))
@@ -341,7 +359,7 @@ export function StorageSettingCard({
                     <DescriptionFieldValue className='min-w-0 flex-1' breakAll>
                       {maskValue(
                         field.identifier,
-                        configData[field.identifier]
+                        getEnumLabel(field, configData[field.identifier])
                       )}
                     </DescriptionFieldValue>
                     <Button
@@ -411,21 +429,53 @@ export function StorageSettingCard({
                   )}
                   {field.label}
                 </Label>
-                <Input
-                  id={`edit-${field.identifier}`}
-                  value={editFormData[field.identifier] || ''}
-                  onChange={(e) => {
-                    setEditFormData({
-                      ...editFormData,
-                      [field.identifier]: e.target.value,
-                    })
-                    clearEditFieldError(field.identifier)
-                  }}
-                  placeholder={t('addModal.fieldPh', { label: field.label })}
-                  className={
-                    editErrors[field.identifier] ? 'border-red-500' : ''
-                  }
-                />
+                {field.dataType === 'enums' && field.enums ? (
+                  <Select
+                    value={editFormData[field.identifier] || ''}
+                    onValueChange={(value) => {
+                      setEditFormData({
+                        ...editFormData,
+                        [field.identifier]: value,
+                      })
+                      clearEditFieldError(field.identifier)
+                    }}
+                  >
+                    <SelectTrigger
+                      className={`w-full ${
+                          editErrors[field.identifier] ? 'border-red-500' : ''
+                        }`}
+                    >
+                      <SelectValue
+                        placeholder={t('addModal.fieldPh', {
+                          label: field.label,
+                        })}
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {field.enums.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                ) : (
+                  <Input
+                    id={`edit-${field.identifier}`}
+                    value={editFormData[field.identifier] || ''}
+                    onChange={(e) => {
+                      setEditFormData({
+                        ...editFormData,
+                        [field.identifier]: e.target.value,
+                      })
+                      clearEditFieldError(field.identifier)
+                    }}
+                    placeholder={t('addModal.fieldPh', { label: field.label })}
+                    className={
+                      editErrors[field.identifier] ? 'border-red-500' : ''
+                    }
+                  />
+                )}
                 {editErrors[field.identifier] && (
                   <div className='flex items-center gap-1 text-sm text-red-500'>
                     <AlertCircle className='h-3 w-3' />

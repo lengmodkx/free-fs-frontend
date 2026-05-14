@@ -33,6 +33,7 @@ import {
 } from '@/api/share'
 import { cn } from '@/lib/utils'
 import { formatTime, formatFileTime } from '@/utils/format'
+import { copyTextToClipboard } from '@/utils/copy-to-clipboard'
 import { usePermission } from '@/hooks/use-permission'
 import {
   AlertDialog,
@@ -251,7 +252,7 @@ export function MySharesView() {
     }
 
     try {
-      await navigator.clipboard.writeText(content.join('\n'))
+      await copyTextToClipboard(content.join('\n'))
       toast.success(t('common.copied'))
     } catch (error) {
       toast.error(t('common.copyFailed'))
@@ -261,7 +262,7 @@ export function MySharesView() {
   // 复制链接
   const handleCopyLink = async (link: string) => {
     try {
-      await navigator.clipboard.writeText(link)
+      await copyTextToClipboard(link)
       setCopiedDetailLink(true)
       setTimeout(() => setCopiedDetailLink(false), 2000)
       toast.success(t('common.copied'))
@@ -273,7 +274,7 @@ export function MySharesView() {
   // 复制提取码
   const handleCopyCode = async (code: string) => {
     try {
-      await navigator.clipboard.writeText(code)
+      await copyTextToClipboard(code)
       setCopiedDetailCode(true)
       setTimeout(() => setCopiedDetailCode(false), 2000)
       toast.success(t('common.copied'))
@@ -301,7 +302,7 @@ export function MySharesView() {
     }
 
     try {
-      await navigator.clipboard.writeText(detailText.join('\n'))
+      await copyTextToClipboard(detailText.join('\n'))
       setCopiedShareDetail(true)
       setTimeout(() => setCopiedShareDetail(false), 2000)
       toast.success(t('common.copied'))
