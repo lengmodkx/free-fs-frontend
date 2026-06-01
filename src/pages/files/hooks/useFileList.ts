@@ -58,7 +58,7 @@ export function useFileList() {
   const currentParentId = searchParams.get('parentId') || undefined
   const viewType = searchParams.get('view')
   const fileType = searchParams.get('type')
-  const isDirFilter = searchParams.get('isDir') === 'true'
+  const isDirFilter = searchParams.get('isDir') === '1'
 
   const updateBreadcrumbPath = useCallback(async (parentId?: string) => {
     if (!parentId) {
@@ -94,7 +94,7 @@ export function useFileList() {
         fileType: fileType as FileType | undefined,
         isFavorite: isFavoritesView ? true : undefined,
         isRecents: isRecentsView ? true : undefined,
-        isDir: isDirFilter ? true : undefined,
+        isDir: isDirFilter ? 1 : undefined,
         page: pageNum,
         pageSize: FILE_LIST_PAGE_SIZE,
       }

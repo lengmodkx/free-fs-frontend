@@ -6,7 +6,7 @@ export interface FileItem {
   suffix: string
   size: number
   mimeType: string
-  isDir: boolean
+  isDir: number // 0-否 1-是
   parentId?: string
   userId: string
   uploadTime: string
@@ -25,7 +25,7 @@ export interface FileRecycleItem {
   displayName: string
   suffix: string
   size: number
-  isDir: boolean
+  isDir: number // 0-否 1-是
   deletedTime: string
 }
 
@@ -47,7 +47,7 @@ export interface FileListParams {
   fileType?: FileType
   isFavorite?: boolean
   isRecents?: boolean
-  isDir?: boolean
+  isDir?: number // 0-否 1-是
   page?: number
   pageSize?: number
 }

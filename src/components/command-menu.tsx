@@ -52,7 +52,7 @@ function buildFilesSearchHref(keyword: string, scope: SearchScopeId): string {
   if (scope === 'all') {
     // 仅关键字
   } else if (scope === 'folder') {
-    params.set('isDir', 'true')
+    params.set('isDir', '1')
   } else {
     params.set('type', scope as FileType)
   }

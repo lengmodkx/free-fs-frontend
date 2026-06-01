@@ -101,7 +101,7 @@ export default function FilesPage() {
   // 计算当前视图类型
   const viewType = searchParams.get('view')
   const fileType = searchParams.get('type')
-  const isDirFilter = searchParams.get('isDir') === 'true'
+  const isDirFilter = searchParams.get('isDir') === '1'
   const isFavoritesView = viewType === 'favorites'
   const isRecentsView = viewType === 'recents'
   const isRecycleBin = viewType === 'recycle'
